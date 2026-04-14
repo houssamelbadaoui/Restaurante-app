@@ -1,0 +1,22 @@
+[
+  { "id": 1, "tipo": "primero", "nombre": "Ensalada mixta", "precio": 5.5 },
+  { "id": 2, "tipo": "primero", "nombre": "Sopa de verduras", "precio": 4.5 },
+  { "id": 3, "tipo": "primero", "nombre": "Gazpacho", "precio": 4.0 },
+
+  { "id": 4, "tipo": "segundo", "nombre": "pollo el horno", "precio": 9.5 },
+  { "id": 5, "tipo": "segundo", "nombre": "Filete de ternera", "precio": 12.0 },
+  {
+    "id": 6,
+    "tipo": "segundo",
+    "nombre": "Pescado a la plancha",
+    "precio": 10.0
+  },
+
+  { "id": 7, "tipo": "postre", "nombre": "Flan", "precio": 3.5 },
+  { "id": 8, "tipo": "postre", "nombre": "Helado", "precio": 3.0 },
+  { "id": 9, "tipo": "postre", "nombre": "tarta de queso", "precio": 4.0 },
+
+  { "id": 10, "tipo": "bebida", "nombre": "Agua", "precio": 1.5 },
+  { "id": 11, "tipo": "bebida", "nombre": "Refresco", "precio": 2.0 },
+  { "id": 12, "tipo": "bebida", "nombre": "Cerveza", "precio": 2.5 }
+]

@@ -34,7 +34,7 @@ async function menuPrincipal() {
       default:
         console.log("Not valid option.");
     }
-  } while (opcion != "4");
+  } while (opcion !== "4");
   rl.close();
 }
 
@@ -62,3 +62,57 @@ async function seleccionarMesa() {
     await menuMesa(mesa, index);
   }
 }
+
+// Menu de Mesa
+async function menuMesa(mesa, index) {
+  do {
+    console.log(`Mesa numero ${index + 1}`);
+    console.log("1. Pedir consumacion");
+    console.log("2. Ver consumacion");
+    console.log("3. Pedir Cuenta");
+    console.log("4. Volver");
+
+    const opcion = await rl.question("Choose an option: ");
+    switch (opcion) {
+      case "1":
+        await pedirConsumacion(mesa);
+        break;
+      case "2":
+        mesa.mostrarConsumaciones();
+        break;
+      case "3":
+        // lo implementamos luego
+        mesa.liberar();
+        console.log("Mesa liberada.");
+        break;
+      default:
+        console.log("Opcion Invalida.");
+    }
+  } while (opcion !== "4");
+}
+
+// Helper function: pedirConsumacion()
+
+async function pedirConsumacion(mesa) {
+  const carta = restaurant.getCarta();
+
+  console.log("Carta: ");
+  carta.forEach((c) => {
+    console.log(`${c.id}. ${c.nombre} (${c.tipo} - ${c.precio}$)`);
+  });
+
+  const opcion = await rl.question("Elige tu consumacion: ");
+  const id = Number(opcion);
+
+  const item = carta.find((c) => c.id === id);
+
+  if (!item) {
+    console.log("Consumacion no valida");
+    return;
+  }
+
+  mesa.agregarConsumiciones(item);
+  console.log(`${item.nombre} añadido`);
+}
+
+menuPrincipal();

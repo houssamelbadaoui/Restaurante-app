@@ -9,6 +9,11 @@ class Mesa {
 
   // metodo para ocupar a una mesa
   ocupar() {
+    // validamos que ya no esta ocupada
+    if (!this.#libre) {
+      console.log("Mesa ya esta ocupada.");
+      return;
+    }
     this.#libre = false;
   }
 
@@ -47,7 +52,9 @@ class Mesa {
     }
     console.log("Consumaciones: ");
     this.#consumiciones.forEach((c, index) => {
-      console.log(`${index + 1}. ${c.nombre} (${c.tipo} - ${c.precio}$)`);
+      console.log(
+        `${index + 1}. Nombre: ${c.nombre} - tipo: (${c.tipo} - Precio: ${c.precio}$)`,
+      );
     });
   }
 }

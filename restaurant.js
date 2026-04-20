@@ -12,35 +12,9 @@ class Restaurante {
     }
 
     // leemos el archivo json y lo guardamos en la carta
-    const data = fs.readFileSync(archivoJSON);
-    this.#carta = JSON.parse(data);
+    this.#carta = JSON.parse(fs.readFileSync(archivoJSON));
 
     this.#precioMenu = precioMenu;
-  }
-
-  // metodo para mostrar mesas
-  mostrarMesas() {
-    console.log("Estado de las mesas: ");
-
-    this.#mesas.forEach((m, index) => {
-      const estado = m.estaLibre() ? "Libre" : "Ocupado";
-      const numConsumaciones = m.getConsumiciones().length;
-      console.log(
-        `Mesa ${index + 1}- ${estado}` +
-          (estado === "Ocupado" ? `(${numConsumaciones} consumaciones)` : ""),
-      );
-    });
-  }
-
-  // Buscar una mesa libre y ocupar la
-  buscarMesaLibre() {
-    for (let i = 0; i < this.#mesas.length; i++) {
-      if (this.#mesas[i].estaLibre()) {
-        this.#mesas[i].ocupar();
-        console.log(`Mesa ${i + 1} asignada.`);
-        return i;
-      }
-    }
   }
 
   // mesas ocupadas
@@ -48,6 +22,25 @@ class Restaurante {
     return this.#mesas
       .map((mesa, index) => ({ mesa, index }))
       .filter((obj) => !obj.mesa.estaLibre());
+  }
+  // metodo para mostrar mesas
+  mostrarMesas() {
+    const ocupadas = this.getMesasOcupadad();
+    ocupadas.forEach((obj) => {
+      console.log(`${obj}: ${obj.mesa.mostrarConsumaciones()}`);
+    });
+  }
+
+  // Buscar una mesa libre y ocupar la
+  buscarMesaLibre() {
+    const mesa = this.#mesas.find((m) => m.estaLibre());
+    if (!mesa) {
+      console.log("No hay mesas vacias.");
+      return;
+    }
+    mesa.ocupar();
+    console.log("Mesa asignada");
+    return mesa;
   }
 
   // seleccionar una mesa
@@ -69,6 +62,37 @@ class Restaurante {
 
   getPrecioMenu() {
     return this.#precioMenu;
+  }
+
+  // metodo para pagar, que devuelve el total para pagar
+  getTotal() {
+    // crear listas para cada tipo
+    const primeros = this.#carta.find((item) => item.tipo === "primero");
+    const segundos = this.#carta.find((item) => item.tipo === "segundo");
+    const postres = this.#carta.find((item) => item.tipo === "postre");
+    const bebidas = this.#carta.find((item) => item.tipo === "bebida");
+
+    // calculamos cuantos menus podemos haced
+    const menus = Math.min(
+      primeros.length,
+      segundos.length,
+      postres.length,
+      bebidas.length,
+    );
+
+    // ahora creamos un nuevo array con item que no entran al los menus: restantes
+    const restantes = [
+      ...primeros.slice(menus),
+      ...segundos.slice(menus),
+      ...postres.slice(menus),
+      ...bebidas.slice(menus),
+    ];
+
+    let total = menus * this.#precioMenu;
+    restantes.forEach((item) => {
+      total += item.precio;
+    });
+    return total;
   }
 }
 

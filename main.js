@@ -12,6 +12,7 @@ const restaurant = new Restaurante(5, "./carta.json", 15);
 // Menu principal
 
 async function menuPrincipal() {
+  let opcion;
   do {
     console.log("Menu Principal: ");
     console.log("1. Mostrar mesas");
@@ -19,14 +20,17 @@ async function menuPrincipal() {
     console.log("3. Seleccionar Mesa");
     console.log("4. Salir");
 
-    const opcion = await rl.question("Choose an option: ");
+    opcion = await rl.question("Choose an option: ");
 
     switch (opcion) {
       case "1":
         restaurant.mostrarMesas();
         break;
       case "2":
-        restaurant.buscarMesaLibre();
+        const mesa = restaurant.buscarMesaLibre();
+        if (mesa) {
+          await menuMesa(mesa);
+        }
         break;
       case "3":
         await seleccionarMesa();
@@ -59,36 +63,34 @@ async function seleccionarMesa() {
   const mesa = restaurant.seleccionarMesa(index);
 
   if (mesa) {
-    await menuMesa(mesa, index);
+    await menuMesa(mesa);
   }
 }
 
 // Menu de Mesa
-async function menuMesa(mesa, index) {
+async function menuMesa(mesa) {
+  let opcion;
   do {
-    console.log(`Mesa numero ${index + 1}`);
+    console.log("Menu de Mesa: ");
     console.log("1. Pedir consumacion");
-    console.log("2. Ver consumacion");
-    console.log("3. Pedir Cuenta");
-    console.log("4. Volver");
+    console.log("2. Pedir Cuenta");
+    console.log("3. Volver");
 
-    const opcion = await rl.question("Choose an option: ");
+    opcion = await rl.question("Choose an option: ");
     switch (opcion) {
       case "1":
         await pedirConsumacion(mesa);
         break;
       case "2":
-        mesa.mostrarConsumaciones();
+        const total = restaurant.getTotal(mesa);
+        console.log(`Total a pagar: ${total}$`);
         break;
       case "3":
-        // lo implementamos luego
-        mesa.liberar();
-        console.log("Mesa liberada.");
-        break;
+        return;
       default:
         console.log("Opcion Invalida.");
     }
-  } while (opcion !== "4");
+  } while (opcion !== "3");
 }
 
 // Helper function: pedirConsumacion()
@@ -98,7 +100,9 @@ async function pedirConsumacion(mesa) {
 
   console.log("Carta: ");
   carta.forEach((c) => {
-    console.log(`${c.id}. ${c.nombre} (${c.tipo} - ${c.precio}$)`);
+    console.log(
+      `Item numero ${c.id}. Nombre: ${c.nombre} - tipo: ${c.tipo} - Precio: ${c.precio}$`,
+    );
   });
 
   const opcion = await rl.question("Elige tu consumacion: ");
@@ -107,7 +111,7 @@ async function pedirConsumacion(mesa) {
   const item = carta.find((c) => c.id === id);
 
   if (!item) {
-    console.log("Consumacion no valida");
+    console.log("Consumacion no valida, Ententa otra ves");
     return;
   }
 

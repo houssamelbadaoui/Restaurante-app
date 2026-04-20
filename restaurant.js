@@ -20,14 +20,19 @@ class Restaurante {
   // mesas ocupadas
   getMesasOcupadad() {
     return this.#mesas
-      .map((mesa, index) => ({ mesa, index }))
+      .map((mesa, numero) => ({ numero, mesa }))
       .filter((obj) => !obj.mesa.estaLibre());
   }
   // metodo para mostrar mesas
   mostrarMesas() {
     const ocupadas = this.getMesasOcupadad();
+    if (ocupadas.length === 0) {
+      console.log("No hay mesas ocupadas");
+      return;
+    }
     ocupadas.forEach((obj) => {
-      console.log(`${obj}: ${obj.mesa.mostrarConsumaciones()}`);
+      console.log(`Mesa ${obj.numero}: `);
+      obj.mesa.mostrarConsumaciones();
     });
   }
 
@@ -65,12 +70,13 @@ class Restaurante {
   }
 
   // metodo para pagar, que devuelve el total para pagar
-  getTotal() {
+  getTotal(mesa) {
+    const consumiciones = mesa.getConsumiciones();
     // crear listas para cada tipo
-    const primeros = this.#carta.find((item) => item.tipo === "primero");
-    const segundos = this.#carta.find((item) => item.tipo === "segundo");
-    const postres = this.#carta.find((item) => item.tipo === "postre");
-    const bebidas = this.#carta.find((item) => item.tipo === "bebida");
+    let primeros = consumiciones.filter((item) => item.tipo === "primero");
+    let segundos = consumiciones.filter((item) => item.tipo === "segundo");
+    let postres = consumiciones.filter((item) => item.tipo === "postre");
+    let bebidas = consumiciones.filter((item) => item.tipo === "bebida");
 
     // calculamos cuantos menus podemos haced
     const menus = Math.min(
@@ -92,6 +98,7 @@ class Restaurante {
     restantes.forEach((item) => {
       total += item.precio;
     });
+    mesa.liberar();
     return total;
   }
 }
